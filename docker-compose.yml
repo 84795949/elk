@@ -1,0 +1,66 @@
+version: '2'
+
+services:
+
+  elasticsearch:
+    build:
+      context: build/elasticsearch/
+    mem_limit: 10G
+    container_name: elk_1
+    hostname: s6-elk
+    volumes:
+      - ./conf/elasticsearch/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
+      - ./data:/usr/share/elasticsearch/data
+      - ./env/elasticsearch:/usr/share/elasticsearch/env
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    environment:
+      ES_JAVA_OPTS: "-Xmx8g -Xms8g"
+    networks:
+      - elk
+    restart: always
+
+  logstash:
+    build:
+      context: build/logstash/
+    mem_limit: 10G
+    container_name: logstash_1
+    hostname: s6-logstash
+    volumes:
+      - ./conf/logstash/logstash.yml:/usr/share/logstash/config/logstash.yml:ro
+      - ./conf/logstash/pipeline:/usr/share/logstash/pipeline:ro
+      - ./conf/logstash/patterns:/usr/share/logstash/patterns:ro
+      - ./env/logstash:/usr/share/logstash/env
+    ports:
+      - "5044:5044"
+    environment:
+      ES_JAVA_OPTS: "-Xmx8g -Xms8g"
+    networks:
+      - elk
+    depends_on:
+      - elasticsearch
+    restart: always
+
+  kibana:
+    build:
+      context: build/kibana/
+    mem_limit: 4G
+    container_name: kibana_1
+    hostname: s6-kibana
+    volumes:
+      - ./conf/kibana:/usr/share/kibana/config:ro
+      - ./env/kibana:/usr/share/kibana/env
+    ports:
+      - "5601:5601"
+    environment: 
+      - TZ=Asia/Shanghai
+    networks:
+      - elk
+    depends_on:
+      - elasticsearch
+
+networks:
+
+  elk:
+    driver: bridge
