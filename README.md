@@ -3,6 +3,8 @@ git clone
 
 cd elk
 
+mkdir ./data
+
 docker-compose build
 
 docker-compose up -d
