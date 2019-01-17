@@ -10,6 +10,7 @@ services:
     hostname: s6-elk
     volumes:
       - ./conf/elasticsearch/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
+      - ./conf/elasticsearch/jvm.options:/usr/share/elasticsearch/config/jvm.options:ro
       - ./data:/usr/share/elasticsearch/data
       - ./env/elasticsearch:/usr/share/elasticsearch/env
     ports:
@@ -29,6 +30,7 @@ services:
     hostname: s6-logstash
     volumes:
       - ./conf/logstash/logstash.yml:/usr/share/logstash/config/logstash.yml:ro
+      - ./conf/logstash/jvm.options:/usr/share/logstash/config/jvm.options:ro
       - ./conf/logstash/pipeline:/usr/share/logstash/pipeline:ro
       - ./conf/logstash/patterns:/usr/share/logstash/patterns:ro
       - ./env/logstash:/usr/share/logstash/env
